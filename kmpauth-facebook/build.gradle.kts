@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.mavenPublish)
+    id("maven-publish")
+
 }
 
 kotlin {
