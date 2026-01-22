@@ -84,8 +84,7 @@ public actual fun FacebookButtonUiContainer(
                     rootVC,
                     FBSDKLoginConfiguration(
                         permissions = permissions,
-                        tracking = FBSDKLoginTrackingLimited,
-                        nonce = sha256(nonce),
+                        tracking = FBSDKLoginTrackingEnabled,
                     ),
                     completion = { result, error ->
                         if (error != null) {
@@ -98,11 +97,23 @@ public actual fun FacebookButtonUiContainer(
                             return@logInFromViewController
                         }
 
-                        val facebookUser = FacebookUser(
-                            accessToken = result?.authenticationToken()?.tokenString() ?: "",
-                            nonce = nonce
-                        )
-                        updatedOnResultFunc(Result.success(facebookUser))
+                        val token = result?.accessToken()?.tokenString()
+                        if (token.isNullOrBlank()) {
+                            updatedOnResultFunc(
+                                Result.failure(
+                                    IllegalStateException("Facebook access token is null")
+                                )
+                            )
+                        } else {
+                            updatedOnResultFunc(
+                                Result.success(
+                                    FacebookUser(
+                                        accessToken = token,
+                                        nonce = null
+                                    )
+                                )
+                            )
+                        }
                     }
                 )
             }
