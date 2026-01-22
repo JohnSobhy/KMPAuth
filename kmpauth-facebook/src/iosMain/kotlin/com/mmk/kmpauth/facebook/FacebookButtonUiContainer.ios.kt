@@ -9,7 +9,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import cocoapods.FBSDKLoginKit.FBSDKLoginConfiguration
 import cocoapods.FBSDKLoginKit.FBSDKLoginManager
-import cocoapods.FBSDKLoginKit.FBSDKLoginTrackingLimited
+import cocoapods.FBSDKLoginKit.FBSDKLoginTrackingEnabled
 import com.mmk.kmpauth.core.KMPAuthInternalApi
 import com.mmk.kmpauth.core.UiContainerScope
 import com.mmk.kmpauth.core.logger.currentLogger
@@ -97,7 +97,7 @@ public actual fun FacebookButtonUiContainer(
                             return@logInFromViewController
                         }
 
-                        val token = result?.accessToken()?.tokenString()
+                        val token = result?.token()?.tokenString()
                         if (token.isNullOrBlank()) {
                             updatedOnResultFunc(
                                 Result.failure(
@@ -105,6 +105,8 @@ public actual fun FacebookButtonUiContainer(
                                 )
                             )
                         } else {
+                            currentLogger.log("Facebook Login succeeded, accessToken = $token")
+
                             updatedOnResultFunc(
                                 Result.success(
                                     FacebookUser(
